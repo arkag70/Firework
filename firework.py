@@ -5,6 +5,7 @@ g = 0.05
 BLASTFORCE = -0.25
 FRAGMENTS = 50
 MARGIN = 10
+colors = ["red", "blue", "green", "yellow", "pink", "violet", "white", "cyan"]
 
 class Circle:
 
@@ -73,7 +74,8 @@ class Cracker:
 
     def constructFragments(self):
         for _ in range(FRAGMENTS):
-            self.fragments.append(Circle(self.screen, (self.circle.x, self.circle.y), 4, self.color))
+            color = self.color if not self.color == "blue" else choice(colors)
+            self.fragments.append(Circle(self.screen, (self.circle.x, self.circle.y), 4, color))
 
     def update(self):
 
