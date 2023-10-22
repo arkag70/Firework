@@ -1,11 +1,18 @@
 import pygame
+import threading
 from random import random, randint, choice
+from playsound import playsound
+
+sound_file = 'firework.mp3'
 width, height = 800, 600
 g = 0.05
 BLASTFORCE = -0.25
 FRAGMENTS = 50
 MARGIN = 10
 colors = ["red", "blue", "green", "yellow", "pink", "violet", "white", "cyan"]
+
+def burstSound():
+    playsound(sound_file)
 
 class Circle:
 
@@ -72,7 +79,16 @@ class Cracker:
             else:
                 self.fragments = []
 
+    def burstSoundThread(self):
+
+        thread = threading.Thread(target=burstSound)
+        thread.daemon = True
+        thread.start()
+
     def constructFragments(self):
+
+        self.burstSoundThread()
+        
         for _ in range(FRAGMENTS):
             color = self.color if not self.color == "blue" else choice(colors)
             self.fragments.append(Circle(self.screen, (self.circle.x, self.circle.y), 4, color))
