@@ -8,8 +8,8 @@ width, height = 800, 600
 g = 0.05
 BLASTFORCE = -0.25
 FRAGMENTS = 50
-MARGIN = 10
-colors = ["red", "blue", "green", "yellow", "pink", "violet", "white", "cyan"]
+MARGIN = 50
+colors = [(255,0,0,255), (0,0,255,255), (0,255,0,255), (255,255,0,255), (255,192,203,255), (148,0,211,255), (255,255,255,255), (0,255,255,255)]
 
 def burstSound():
     playsound(sound_file)
@@ -46,10 +46,10 @@ class Cracker:
 
     def blast(self):
         self.peaked = True
-        for circle in self.fragments:
+        for fragment in self.fragments:
             xforce = random() * 0.06 - 0.03
             yforce = random() * -0.06
-            self.applyForce((xforce, yforce), circle)
+            self.applyForce((xforce, yforce), fragment)
 
     def stopFireWork(self):
         self.circle = None
@@ -68,14 +68,15 @@ class Cracker:
         else:
             self.lifespan -= 1
             if self.lifespan > 0:
-                for circle in self.fragments:
-                    circle.x += circle.xvel
-                    circle.y += circle.yvel
+                for fragment in self.fragments:
 
-                    circle.xvel += circle.xacc
-                    circle.yvel += circle.yacc
+                        fragment.x += fragment.xvel
+                        fragment.y += fragment.yvel
 
-                    circle.yacc += g / 30
+                        fragment.xvel += fragment.xacc
+                        fragment.yvel += fragment.yacc
+
+                        fragment.yacc += g / 30
             else:
                 self.fragments = []
 
@@ -88,10 +89,10 @@ class Cracker:
     def constructFragments(self):
 
         self.burstSoundThread()
-        
+
         for _ in range(FRAGMENTS):
             color = self.color if not self.color == "blue" else choice(colors)
-            self.fragments.append(Circle(self.screen, (self.circle.x, self.circle.y), 4, color))
+            self.fragments.append(Circle(self.screen, (self.circle.x, self.circle.y), 2, color))
 
     def update(self):
 
@@ -105,9 +106,14 @@ class Cracker:
                 self.blast()
 
     def show(self):
-
+        
         if self.circle != None:
             pygame.draw.circle(self.screen, self.circle.color, (self.circle.x, self.circle.y), self.circle.radius)
-
-        for circle in self.fragments:
-            pygame.draw.circle(self.screen, circle.color, (circle.x, circle.y), circle.radius)
+        for fragment in self.fragments:
+            surface = pygame.Surface((fragment.radius * 2 - 1, fragment.radius * 2 -1), pygame.SRCALPHA)   # per-pixel alpha
+            r,g,b,a = fragment.color
+            a /= 1.7
+            a = int(a)
+            surface.fill((r,g,b,a))                         # notice the alpha value in the color
+            pygame.draw.circle(surface, fragment.color, (fragment.x, fragment.y), fragment.radius)
+            self.screen.blit(surface, (fragment.x,fragment.y))

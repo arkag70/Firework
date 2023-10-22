@@ -17,7 +17,7 @@ pygame.init()
 screen = pygame.display.set_mode((width, height))
 
 # Set the background color to black
-background_color = (0, 0, 0)
+background_color = (0, 0, 0, 100)
 
 # Main game loop
 if __name__ == "__main__":
